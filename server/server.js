@@ -3,9 +3,11 @@ import cors from "cors";
 import "dotenv/config";
 import { clerkMiddleware, requireAuth } from "@clerk/express";
 import aiRouter from "./routes/aiRoutes.js";
+import connectcloudinary from "./config/cloudinary.js";
 
 const app = express();
 
+await connectcloudinary();
 // app.use((req, res, next) => {
 //   console.log("HIT =>", req.method, req.url);
 //   next();

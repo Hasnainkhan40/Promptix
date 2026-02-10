@@ -2,7 +2,10 @@ import { GoogleGenAI } from "@google/genai";
 import sql from "../config/db.js";
 import { clerkClient } from "@clerk/express";
 import axios from "axios";
-
+import { v2 as cloudinary } from "cloudinary";
+import FormData from "form-data";  
+import fs from 'fs';
+import pdf from 'pdf-parse/lib/pdf-parse.js'
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -148,34 +151,195 @@ export const generateImage = async (req, res) => {
         message: "This feature is only available for premium subscriptions",
       });
     }
-    
-    const formData = new FormData()
-    formData.append('prompt', prompt)
-    await axios.post("https://clipdrop-api.co/text-to-image/v1", formData, {
-            headers: {
-                'x-api-key': process.env.CLIPDROP_API_KEY,
-            },
-            responseType: "arraybuffer",
-            })
-                
+
+    if (!process.env.CLIPDROP_API_KEY) {
+      return res
+        .status(500)
+        .json({ success: false, message: "CLIPDROP_API_KEY missing" });
+    }
+
+    // ✅ Use Node FormData + include boundary headers
+    const formData = new FormData();
+    formData.append("prompt", prompt);
+
+    const resp = await axios.post(
+      "https://clipdrop-api.co/text-to-image/v1",
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),              // ✅ CRITICAL
+          "x-api-key": process.env.CLIPDROP_API_KEY,
+        },
+        responseType: "arraybuffer",
+        timeout: 30000,
+      }
+    );
+
+    const base64Image = `data:image/png;base64,${Buffer.from(resp.data).toString("base64")}`;
+
+    const { secure_url } = await cloudinary.uploader.upload(base64Image, {
+      folder: "promptix",
+    });
 
     await sql`
-      INSERT INTO creations (user_id, prompt, content, type)
-      VALUES (${userId}, ${prompt}, ${content}, 'article')
-    `;
+      INSERT INTO creations (user_id, prompt, content, type, publish)
+      VALUES (${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})
+    `; 
+
+    return res.json({ success: true, content: secure_url });
+  } catch (error) {
+    // ✅ show Clipdrop message safely (without leaking API key)
+    const status = error?.response?.status || 500;
+
+    let clipdropMsg = error.message;
+    try {
+      if (error?.response?.data) {
+        const text = Buffer.from(error.response.data).toString("utf8");
+        clipdropMsg = text; // Clipdrop returns {"error":"..."}
+      }
+    } catch {}
+
+    console.log("Clipdrop error status:", status);
+    console.log("Clipdrop error body:", clipdropMsg);
+
+    return res.status(status).json({ success: false, message: clipdropMsg });
+  }
+};
+
+
+
+export const removeImageBackground = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const { image } = req.file;
+    const plan = req.plan;
+
+    if (!prompt || typeof prompt !== "string") {
+      return res.json({ success: false, message: "Prompt is required." });
+    }
 
     if (plan !== "premium") {
-      await clerkClient.users.updateUserMetadata(userId, {
-        privateMetadata: {
-          free_usage: free_usage + 1,
-        },
+      return res.json({
+        success: false,
+        message: "This feature is only available for premium subscriptions",
       });
     }
 
-    return res.json({ success: true, content });
-  } catch (error) {
-    console.log(error);
-    return res.json({ success: false, message: error.message });
-  }
-}
+    const { secure_url } = await cloudinary.uploader.upload(image.path, {
+      transformation: [{
+                effect: 'background_removal',
+                background_removal: 'remove_the_background'
+      }]
+    });
 
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, 'Remove background from image', ${secure_url}, 'image')
+    `; 
+
+     res.json({ success: true, content: secure_url });
+
+  } catch (error) {
+      console.log(error.message)
+      res.json({success: false, message: error.message})
+  }
+};
+ 
+
+
+export const removeImageObject = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const { object } = req.body;
+    const { image } = req.file;
+    const plan = req.plan;
+
+    if (!prompt || typeof prompt !== "string") {
+      return res.json({ success: false, message: "Prompt is required." });
+    }
+
+    if (plan !== "premium") {
+      return res.json({
+        success: false,
+        message: "This feature is only available for premium subscriptions",
+      });
+    }
+
+    const { public_id } = await cloudinary.uploader.upload(image.path);
+    const imageUrl = cloudinary.url(public_id, {
+      transformation: [{effect: `gen_remove:${object}`}],
+      resource_type: 'image'
+    })
+
+
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, ${`Remove ${object} from image`}, ${imageUrl}, 'image')
+    `; 
+
+     res.json({ success: true, content: imageUrl });
+
+  } catch (error) {
+      console.log(error.message)
+      res.json({success: false, message: error.message})
+  }
+};
+
+
+export const resumeReview = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const resume = req.file;
+    const plan = req.plan;
+
+    if (!prompt || typeof prompt !== "string") {
+      return res.json({ success: false, message: "Prompt is required." });
+    }
+
+    if (plan !== "premium") {
+      return res.json({
+        success: false,
+        message: "This feature is only available for premium subscriptions",
+      });
+    }
+
+    if(resume.size > 5 * 1024 * 1024){
+      return res.json({success: false, message: "Resume file size exceeds allowed size (5MB)."})
+    }
+
+    const dataBuffer = fs.readFileSync(resume.path)
+    const pdfData = await pdf(dataBuffer)
+    const prompt = `Review the following resume and provide constructive feedback on its strengths, weaknesses, and areas for improvement. Resume Content:\n\n${pdfData.text}`
+    
+
+    // Clamp tokens (avoid insane values)
+    const maxOutputTokens = Math.max(200, Math.min(Number(length) || 800, 4000));
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        max_tokens: 1000,
+      },
+    });
+
+    const content = response?.text || "";
+
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (${userId}, 'Review the uploaded resume', ${content}, 'resume-review')
+    `; 
+
+     res.json({ success: true, content: content });
+
+  } catch (error) {
+      console.log(error.message)
+      res.json({success: false, message: error.message})
+  }
+};
