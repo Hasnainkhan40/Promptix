@@ -3,10 +3,20 @@ import sql from "../config/db.js";
 import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
-import FormData from "form-data";  
+import FormData from "form-data"; 
 import fs from 'fs';
-import pdf from 'pdf-parse/lib/pdf-parse.js'
 
+
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
+const pdfParse = require("pdf-parse");
+
+
+
+// import { createRequire } from "module";
+// const require = createRequire(import.meta.url);
+// const pdf = require("pdf-parse");
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -90,28 +100,17 @@ export const generateBlogTitle = async (req, res) => {
       });
     }
 
-    // Clamp tokens (avoid insane values)
-    const maxOutputTokens = Math.max(200, Math.min(Number(length) || 800, 4000));
-
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: prompt }],
-        },
-      ],
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.7,
-        max_tokens: 100,
+        maxOutputTokens: 100,
       },
     });
 
     const content = response?.text || "";
-
-    if (!content) {
-      return res.json({ success: false, message: "No content generated." });
-    }
+    if (!content) return res.json({ success: false, message: "No content generated." });
 
     await sql`
       INSERT INTO creations (user_id, prompt, content, type)
@@ -120,19 +119,17 @@ export const generateBlogTitle = async (req, res) => {
 
     if (plan !== "premium") {
       await clerkClient.users.updateUserMetadata(userId, {
-        privateMetadata: {
-          free_usage: free_usage + 1,
-        },
+        privateMetadata: { free_usage: free_usage + 1 },
       });
     }
 
     return res.json({ success: true, content });
-
   } catch (error) {
     console.log(error);
     return res.json({ success: false, message: error.message });
   }
-}
+};
+
 
 
 export const generateImage = async (req, res) => {
@@ -204,19 +201,17 @@ export const generateImage = async (req, res) => {
 
     return res.status(status).json({ success: false, message: clipdropMsg });
   }
-};
+};  
 
 
 
 export const removeImageBackground = async (req, res) => {
   try {
-    const { userId } = req.auth();
-    const { image } = req.file;
+    const { userId } = await  req.auth();
+    const  image  = req.file;
     const plan = req.plan;
 
-    if (!prompt || typeof prompt !== "string") {
-      return res.json({ success: false, message: "Prompt is required." });
-    }
+  
 
     if (plan !== "premium") {
       return res.json({
@@ -249,14 +244,11 @@ export const removeImageBackground = async (req, res) => {
 
 export const removeImageObject = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = await  req.auth();
     const { object } = req.body;
-    const { image } = req.file;
+    const  image  = req.file;
     const plan = req.plan;
 
-    if (!prompt || typeof prompt !== "string") {
-      return res.json({ success: false, message: "Prompt is required." });
-    }
 
     if (plan !== "premium") {
       return res.json({
@@ -286,15 +278,12 @@ export const removeImageObject = async (req, res) => {
 };
 
 
+
 export const resumeReview = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = await req.auth();
     const resume = req.file;
     const plan = req.plan;
-
-    if (!prompt || typeof prompt !== "string") {
-      return res.json({ success: false, message: "Prompt is required." });
-    }
 
     if (plan !== "premium") {
       return res.json({
@@ -303,43 +292,31 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    if(resume.size > 5 * 1024 * 1024){
-      return res.json({success: false, message: "Resume file size exceeds allowed size (5MB)."})
+    if (!resume) {
+      return res.json({ success: false, message: "No resume file received." });
     }
 
-    const dataBuffer = fs.readFileSync(resume.path)
-    const pdfData = await pdf(dataBuffer)
-    const prompt = `Review the following resume and provide constructive feedback on its strengths, weaknesses, and areas for improvement. Resume Content:\n\n${pdfData.text}`
-    
+    if (resume.size > 5 * 1024 * 1024) {
+      return res.json({ success: false, message: "Resume file size exceeds 5MB." });
+    }
 
-    // Clamp tokens (avoid insane values)
-    const maxOutputTokens = Math.max(200, Math.min(Number(length) || 800, 4000));
+    const dataBuffer = fs.readFileSync(resume.path);
+
+    const pdfData = await pdfParse(dataBuffer);
+
+
+    const prompt = `Review the following resume and provide constructive feedback...\n\n${pdfData.text}`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: prompt }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        max_tokens: 1000,
-      },
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 1000 },
     });
 
     const content = response?.text || "";
-
-    await sql`
-      INSERT INTO creations (user_id, prompt, content, type)
-      VALUES (${userId}, 'Review the uploaded resume', ${content}, 'resume-review')
-    `; 
-
-     res.json({ success: true, content: content });
-
+    return res.json({ success: true, content });
   } catch (error) {
-      console.log(error.message)
-      res.json({success: false, message: error.message})
+    console.log(error);
+    return res.json({ success: false, message: error.message });
   }
 };
