@@ -1,22 +1,23 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:8b5cf6&height=200&section=header&text=AI%20SaaS%20Platform&fontSize=48&fontColor=ffffff&fontAlignY=35&desc=Full-Stack%20AI%20Application%20with%20Subscriptions&descAlignY=55&descSize=18&animation=fadeIn" width="100%"/>
+# 🤖 AI SaaS Platform
+
+### Full-Stack AI Application with Subscription Billing
+
+*Built with the PERN Stack — PostgreSQL · Express · React · Node.js*
 
 <br/>
 
-<p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?style=for-the-badge&logo=postgresql&logoColor=white"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge&logo=clerk&logoColor=white"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/></a>
-</p>
-
-<p align="center">
-  <strong>A production-ready AI SaaS application built with the PERN stack — featuring subscription billing, AI-powered tools, and a seamless user experience.</strong>
-</p>
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech)
+[![Clerk](https://img.shields.io/badge/Auth-Clerk-6C47FF?style=flat-square&logo=clerk&logoColor=white)](https://clerk.dev)
+[![Stripe](https://img.shields.io/badge/Billing-Stripe-635BFF?style=flat-square&logo=stripe&logoColor=white)](https://stripe.com)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 
 <br/>
+
+> A production-ready AI SaaS application with subscription-based access to premium AI features — article generation, image tools, resume analysis, and more.
 
 </div>
 
@@ -24,72 +25,66 @@
 
 ## 📌 Overview
 
-This project is a **fully functional AI SaaS Application** with subscription-based access to premium AI features. Built on the **PERN stack** (PostgreSQL, Express, React, Node.js), it covers everything from authentication and billing to multiple AI-powered tools — making it an ideal blueprint for modern SaaS products.
+This project is a **fully functional AI SaaS Application** built on the **PERN stack** (PostgreSQL, Express, React, Node.js). It covers everything from authentication and billing to multiple AI-powered tools — making it an ideal blueprint for building modern SaaS products.
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-### 🔐 User Authentication
-Powered by **Clerk** — a complete authentication solution with:
-- Secure **Sign Up / Sign In** flows
-- **Profile management** (avatar, name, email)
+### 🔐 User Authentication — Clerk
+- Secure **Sign Up / Sign In** with email & social OAuth
+- **Profile management** — avatar, name, email
 - Session handling & JWT-based route protection
-- Social OAuth (Google, GitHub, etc.)
 
-### 💳 Subscription Billing
-Premium access via **Stripe** subscription billing:
-- Free tier with limited usage
-- Premium tier unlocking all AI features
+### 💳 Subscription Billing — Stripe
+- **Free tier** with limited access
+- **Premium tier** unlocking all AI features
 - Billing portal for plan management
 - Webhook handling for real-time subscription events
 
-### 🗄️ PostgreSQL Database
-Serverless **Neon PostgreSQL** database:
-- Serverless, auto-scaling architecture
-- Schema-managed tables for users, subscriptions & usage logs
+### 🗄️ Database — Neon PostgreSQL
+- Serverless, auto-scaling PostgreSQL
+- Tables for users, subscriptions & usage logs
 - Connection pooling for production performance
 
 ---
 
-## 🤖 AI-Powered Features
+## 🤖 AI-Powered Tools
 
-| Feature | Description | Access |
-|---|---|---|
-| 📝 **Article Generator** | Provide a title & length to generate full articles using AI | Premium |
+| Tool | Description | Tier |
+|------|-------------|------|
+| 📝 **Article Generator** | Enter a title & length to generate full AI-written articles | Premium |
 | 💡 **Blog Title Generator** | Enter a keyword & category to get AI-curated blog title ideas | Premium |
 | 🖼️ **Image Generator** | Describe a scene or concept to generate unique AI images | Premium |
-| ✂️ **Background Remover** | Upload any image and instantly get a clean transparent background | Premium |
-| 🧹 **Image Object Remover** | Upload an image, name the object — AI removes it seamlessly | Premium |
+| ✂️ **Background Remover** | Upload any image and get a clean transparent background instantly | Premium |
+| 🧹 **Object Remover** | Upload an image, name an object — AI removes it seamlessly | Premium |
 | 📄 **Resume Analyzer** | Upload your resume for a complete AI-powered analysis & feedback | Premium |
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React 18** — UI library
-- **Vite** — blazing-fast build tool
-- **Tailwind CSS** — utility-first styling
-- **React Router v6** — client-side routing
-- **Clerk React SDK** — authentication UI & hooks
-- **Axios** — HTTP client
+**Frontend**
+- React 18 + Vite
+- Tailwind CSS
+- React Router v6
+- Clerk React SDK
+- Axios
 
-### Backend
-- **Node.js** — runtime environment
-- **Express.js** — REST API framework
-- **Clerk Express SDK** — server-side auth middleware
-- **Stripe SDK** — subscription & payment processing
-- **Multer** — file upload handling
+**Backend**
+- Node.js + Express.js
+- Clerk Express SDK (auth middleware)
+- Stripe SDK (subscriptions & payments)
+- Multer (file uploads)
 
-### Database
-- **PostgreSQL** (via **Neon** — serverless)
-- **pg** — Node.js PostgreSQL client
+**Database**
+- PostgreSQL via [Neon](https://neon.tech) (serverless)
+- `pg` — Node.js PostgreSQL client
 
-### AI & External APIs
-- **OpenAI API** — article generation, blog titles, image generation
-- **Clipdrop / Remove.bg API** — background removal
-- **IOPaint / Inpaint API** — object removal from images
+**AI & External APIs**
+- OpenAI API — article, blog titles, image generation
+- Clipdrop / Remove.bg — background removal
+- IOPaint / Inpaint API — object removal
 
 ---
 
@@ -97,60 +92,24 @@ Serverless **Neon PostgreSQL** database:
 
 ```
 ai-saas-platform/
-├── client/                         # React frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/             # Reusable UI components
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── Sidebar.jsx
-│   │   │   └── PricingCard.jsx
-│   │   ├── pages/                  # Route-level pages
-│   │   │   ├── Home.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── ArticleGenerator.jsx
-│   │   │   ├── BlogTitleGenerator.jsx
-│   │   │   ├── ImageGenerator.jsx
-│   │   │   ├── BackgroundRemover.jsx
-│   │   │   ├── ObjectRemover.jsx
-│   │   │   └── ResumeAnalyzer.jsx
-│   │   ├── context/                # Global state
-│   │   ├── hooks/                  # Custom React hooks
-│   │   ├── utils/                  # Helper functions
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── .env
-│   ├── index.html
-│   └── package.json
+├── client/                          # React frontend
+│   └── src/
+│       ├── components/              # Navbar, Sidebar, PricingCard ...
+│       ├── pages/                   # Home, Dashboard, each AI tool page
+│       ├── context/                 # Global state
+│       ├── hooks/                   # Custom React hooks
+│       └── utils/                   # Helper functions
 │
-├── server/                         # Express backend
-│   ├── config/
-│   │   └── db.js                   # Neon PostgreSQL connection
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── aiController.js
-│   │   ├── billingController.js
-│   │   └── uploadController.js
-│   ├── middleware/
-│   │   ├── authMiddleware.js       # Clerk JWT verification
-│   │   ├── subscriptionMiddleware.js
-│   │   └── uploadMiddleware.js
-│   ├── routes/
-│   │   ├── aiRoutes.js
-│   │   ├── billingRoutes.js
-│   │   └── userRoutes.js
-│   ├── services/
-│   │   ├── openaiService.js
-│   │   ├── imageService.js
-│   │   └── stripeService.js
-│   ├── webhooks/
-│   │   └── stripeWebhook.js
-│   ├── .env
-│   ├── server.js
-│   └── package.json
-│
-├── .gitignore
-└── README.md
+└── server/                          # Express backend
+    ├── config/
+    │   └── db.js                    # Neon PostgreSQL connection
+    ├── controllers/                 # Auth, AI, Billing, Upload
+    ├── middleware/                  # Clerk auth, subscription check, upload
+    ├── routes/                      # AI, billing, user routes
+    ├── services/                    # OpenAI, image, Stripe services
+    ├── webhooks/
+    │   └── stripeWebhook.js
+    └── server.js
 ```
 
 ---
@@ -159,50 +118,28 @@ ai-saas-platform/
 
 ### Prerequisites
 
-Make sure you have the following installed:
-- **Node.js** v18 or above
+- **Node.js** v18+
 - **npm** or **yarn**
-- **Git**
+- Accounts on: [Clerk](https://clerk.dev) · [Neon](https://neon.tech) · [Stripe](https://stripe.com) · [OpenAI](https://platform.openai.com)
 
-You'll also need accounts on:
-- [Clerk](https://clerk.dev) — Authentication
-- [Neon](https://neon.tech) — Serverless PostgreSQL
-- [Stripe](https://stripe.com) — Payments & Subscriptions
-- [OpenAI](https://platform.openai.com) — AI APIs
-
----
-
-### ⚙️ Installation
-
-**1. Clone the repository**
+### Installation
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/your-username/ai-saas-platform.git
 cd ai-saas-platform
+
+# 2. Install server dependencies
+cd server && npm install
+
+# 3. Install client dependencies
+cd ../client && npm install
 ```
 
-**2. Install server dependencies**
+### Environment Variables
 
-```bash
-cd server
-npm install
-```
-
-**3. Install client dependencies**
-
-```bash
-cd ../client
-npm install
-```
-
----
-
-### 🔑 Environment Variables
-
-**Server — `server/.env`**
-
+**`server/.env`**
 ```env
-# Server
 PORT=5000
 NODE_ENV=development
 
@@ -220,23 +157,20 @@ STRIPE_PREMIUM_PRICE_ID=your_stripe_price_id
 # OpenAI
 OPENAI_API_KEY=your_openai_api_key
 
-# Image AI APIs
+# Image APIs
 CLIPDROP_API_KEY=your_clipdrop_api_key
 REMOVE_BG_API_KEY=your_removebg_api_key
 ```
 
-**Client — `client/.env`**
-
+**`client/.env`**
 ```env
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
----
+### Database Setup
 
-### 🗃️ Database Setup
-
-Connect to your Neon database and run the following SQL:
+Run the following SQL in your Neon dashboard:
 
 ```sql
 CREATE TABLE users (
@@ -267,112 +201,89 @@ CREATE TABLE usage_logs (
 );
 ```
 
----
-
-### ▶️ Running the Application
-
-**Start the backend server**
+### Run the App
 
 ```bash
-cd server
+# Start the backend (from /server)
+npm run dev
+
+# Start the frontend in a new terminal (from /client)
 npm run dev
 ```
 
-**Start the frontend (in a new terminal)**
-
-```bash
-cd client
-npm run dev
-```
-
-The app will be available at `http://localhost:5173`
+App runs at **http://localhost:5173**
 
 ---
 
 ## 📸 Screenshots
 
-> _Add your screenshots here_
-
 | Landing Page | Dashboard | AI Tools |
 |:---:|:---:|:---:|
-| ![Landing]() | ![Dashboard]() | ![Tools]() |
+| ![Landing](./screenshots/landing.png) | ![Dashboard](./screenshots/dashboard.png) | ![Tools](./screenshots/tools.png) |
 
 ---
 
-## 💡 Usage Guide
+## 💡 How to Use
 
-### Free Tier
-- Access to the dashboard and basic features
-- Limited preview of AI tools
+**Free Tier** — Access the dashboard and preview AI tools with limited usage.
 
-### Premium Tier
-1. Navigate to the **Pricing** page
+**Premium Tier**
+1. Go to the **Pricing** page
 2. Click **Upgrade to Premium**
 3. Complete checkout via Stripe
-4. All AI tools are immediately unlocked
+4. All AI tools unlock immediately
 
-### AI Tools Usage
-- **Article Generator** → Enter a topic/title + desired word count → Click Generate
-- **Blog Title Generator** → Enter a keyword + category → Get 10 AI-curated titles
-- **Image Generator** → Write a detailed prompt → Generate unique images
+**Using the AI Tools**
+- **Article Generator** → Enter title + word count → Generate
+- **Blog Title Generator** → Enter keyword + category → Get 10 AI titles
+- **Image Generator** → Write a detailed prompt → Generate image
 - **Background Remover** → Upload image → Download with transparent background
-- **Object Remover** → Upload image → Describe the object → Download clean image
-- **Resume Analyzer** → Upload your PDF resume → Get detailed AI feedback
+- **Object Remover** → Upload image + describe object → Download clean image
+- **Resume Analyzer** → Upload PDF resume → Get detailed AI feedback
 
 ---
 
 ## 🔒 Security
 
-- All API routes are protected with **Clerk JWT middleware**
-- Premium routes check **subscription status** before processing
+- All API routes protected with **Clerk JWT middleware**
+- Premium routes verify **subscription status** before processing
 - **Stripe Webhooks** use signature verification
-- Environment variables are never exposed to the client
-- File uploads are validated for type and size
+- Environment variables never exposed to the client
+- File uploads validated for type and size
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1. **Fork** the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add some amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
+1. Fork the repository
+2. Create your branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -m 'Add your feature'`
+4. Push to branch: `git push origin feature/your-feature`
 5. Open a **Pull Request**
-
-Please make sure your code follows the existing code style and includes tests where appropriate.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+Licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
 
 ---
 
 ## 🙏 Acknowledgements
 
 - [Clerk](https://clerk.dev) — Authentication made simple
-- [Neon](https://neon.tech) — Serverless Postgres
+- [Neon](https://neon.tech) — Serverless PostgreSQL
 - [Stripe](https://stripe.com) — Payment infrastructure
-- [OpenAI](https://openai.com) — Powerful AI APIs
-- [Clipdrop](https://clipdrop.co/apis) — Background & image processing APIs
+- [OpenAI](https://openai.com) — AI APIs
+- [Clipdrop](https://clipdrop.co/apis) — Image processing APIs
 
 ---
 
 <div align="center">
+<br/>
+<strong>⭐ Star this repo if you found it helpful!</strong>
+<br/><br/>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:8b5cf6,100:6366f1&height=100&section=footer" width="100%"/>
-
-<p>Made with ❤️ using the PERN Stack</p>
-
-<p>
-  <a href="#">⭐ Star this repo</a> •
-  <a href="#">🐛 Report Bug</a> •
-  <a href="#">💡 Request Feature</a>
-</p>
+Made with ❤️ using the PERN Stack
 
 </div>
- 
- 
